@@ -275,12 +275,15 @@ bool BELLMAN_FORD(vector<vector<int>> &edges, Node *nodes, int soruce){
     return true;
 }
 */
+
+// Linear Time -> O(V + E).
 DAG_SHORTEST_PATHS(vector<vector<int>> &edges, Node *nodes, int soruce)
 {
-    TOPOLOGICAL_SORT(edges, nodes);                 // O(VE)
+    TOPOLOGICAL_SORT(edges, nodes);                 // O(V + E)
     INITIALIZE_SINGLE_SOURCE(edges, nodes, soruce); // O(V)
-    for (vertex u : G.V)
-    { // in topologically sorted order.
+
+    for (vertex u : G.V) // O(E), in topologically sorted order.
+    {
         for (vertex v : u.neighbors)
         {
             RELAX(edges, nodes, u, v);
