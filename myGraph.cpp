@@ -92,6 +92,7 @@ void DFS_VISIT(vector<vector<int>> &edges, Node *nodes, int source)
     // Topological sort: Push it onto the front of a linked list.
 }
 
+// O(V + E)
 void DFS(vector<vector<int>> &edges, Node *nodes)
 {
     for (int i = 0; i < edges.size(); i++)
@@ -157,6 +158,7 @@ void PRINT_DFS(vector<vector<int>> &edges, Node *nodes)
     }
 }
 
+// O(V + E)
 LinkedListNode *TOPOLOGICAL_SORT(vector<vector<int>> &edges, Node *nodes)
 {
     DFS(edges, nodes);
@@ -227,11 +229,10 @@ MST_PRIM(G, w, root){               // O(ElogV)
 
 /*
     Single Source Shortest Path.
-    1. No negative-weighted cycles.
-    2. Non-negative weights.
+    -> No negative-weighted cycles.
 */
 
-// Relaxation
+// Initialization
 void INITIALIZE_SINGLE_SOURCE(vector<vector<int>> &edges, Node *nodes, int source)
 {
     for (int i = 0; i, edges.size(); i++)
@@ -244,10 +245,46 @@ void INITIALIZE_SINGLE_SOURCE(vector<vector<int>> &edges, Node *nodes, int sourc
 // Relaxation -> Try to find a shorter path between source and v, using the path from node u.
 void RELAX(vector<vector<int>> &edges, Node *nodes, int u, int v)
 {
+    if (nodes[u].d == INT_MAX)
+        return;
     if (nodes[u].d + edges[u][v] < nodes[v].d)
     {
         nodes[v].d = nodes[u].d + edges[u][v];
         nodes[v].pi = u;
+    }
+}
+
+/*
+    Bellman-Ford's Algorithm.
+    0. Could handle negative weights.
+    1. return a boolean: true if a negative-weighted cycle exists, false if a solution could be found.
+*/
+
+/* O(VE)
+bool BELLMAN_FORD(vector<vector<int>> &edges, Node *nodes, int soruce){
+    INITIALIZE_SINGLE_SOURCE(vector<vector<int>> &edges, Node *nodes, int soruce);
+    // Each edge be relaxed |V| - 1 times
+    for(int i = 0; i < edges.size() - 1; i++){          // V - 1 times
+        for(edge (u,v):G.E) RELAX(edges, nodes, u, v);  // O(E)
+    }
+
+    // Check the existence of negative cycles.
+    for(edge (u,v):G.E){
+        if(u.d + edges[u][v] < v.d) return false;
+    }
+    return true;
+}
+*/
+DAG_SHORTEST_PATHS(vector<vector<int>> &edges, Node *nodes, int soruce)
+{
+    TOPOLOGICAL_SORT(edges, nodes);                 // O(VE)
+    INITIALIZE_SINGLE_SOURCE(edges, nodes, soruce); // O(V)
+    for (vertex u : G.V)
+    { // in topologically sorted order.
+        for (vertex v : u.neighbors)
+        {
+            RELAX(edges, nodes, u, v);
+        }
     }
 }
 
