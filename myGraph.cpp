@@ -12,8 +12,8 @@ int timeT = 0;
 struct Node
 {
     string color;
-    int d;  // the shortest distance in BFS; First viewed time in DFS.
-    int f;  //                               Time after scan all it's neighbor.
+    int d;  // 1. The shortest distance in BFS; 2. First viewed time in DFS.
+    int f;  //                                  1. Time after scanning all it's neighbors.
     int pi; // Previous Node
 };
 
@@ -217,13 +217,39 @@ MST_PRIM(G, w, root){               // O(ElogV)
         for each v in u.neighbors{  // run O(2E) times in total
             if(v in Q && w(u, v) < v.key){
                 v.pi = u;
-                v.key = w(u, v);    // O(logV)
+                v.key = w(u, v);    // Update weights in pq. O(logV).
             }
         }
     }
     return root;
 }
 */
+
+/*
+    Single Source Shortest Path.
+    1. No negative-weighted cycles.
+    2. Non-negative weights.
+*/
+
+// Relaxation
+void INITIALIZE_SINGLE_SOURCE(vector<vector<int>> &edges, Node *nodes, int source)
+{
+    for (int i = 0; i, edges.size(); i++)
+    {
+        nodes[i].d = INT_MAX;
+        node[i].pi = -1;
+    }
+    node[source] = 0;
+}
+// Relaxation -> Try to find a shorter path between source and v, using the path from node u.
+void RELAX(vector<vector<int>> &edges, Node *nodes, int u, int v)
+{
+    if (nodes[u].d + edges[u][v] < nodes[v].d)
+    {
+        nodes[v].d = nodes[u].d + edges[u][v];
+        nodes[v].pi = u;
+    }
+}
 
 int main()
 {
