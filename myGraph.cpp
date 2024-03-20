@@ -291,6 +291,62 @@ DAG_SHORTEST_PATHS(vector<vector<int>> &edges, Node *nodes, int soruce)
     }
 }
 
+/*
+    Dijkstra's Algorithm.
+    1. Non-negative weights.
+    2. Greedy Algorithm.
+
+*/
+
+void DIJKSTRA(vector<vector<int>> &edges, Node *nodes, int soruce)
+{
+    INITIALIZE_SINGLE_SOURCE(vector<vector<int>> & edges, Node * nodes, int soruce);
+    S = empty set;
+    pq = G.V;
+    while (!pq.empty())
+    { // O(V)
+        u = pq.top();
+        pq.pop();
+        S = S U{U};
+        for (vertex v : u.neighbors)
+        {
+            RELAX(edges, nodes, u, v); // DECREASE_KEY |E| times
+        }
+    }
+}
+// Time: O(ElogE), Space: O(V + E)
+vector<int> myDijkstra(vector<vector<pair<int, int>>> &graph, int source)
+{
+    int n = graph.size();
+    vector<int> distArr(n, INT_MAX);                                      // memo
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq; // Store each Vertex as {v.dist, v.id}!
+    pq.push({0, source});
+    distArr[source] = 0;
+
+    while (!pq.empty()) // O(E)
+    {
+        pair<int, int> *p = pq.top();
+        pq.pop();
+        int dist = p->first;
+        int u = p->second;
+
+        if (dist > distArr[u])
+            continue; // Shorter Path Already Found.
+
+        for (const auto &pair : graph[u])
+        {
+            int v = pair.first;
+            int weight = pair.second;
+            if (distArr[v] > distArr[u] + weight)
+            {
+                distArr[v] = distArr[u] + weight;
+                pq.push(distArr[v], v); // O(logE)
+            }
+        }
+    }
+    return distArr;
+}
+
 int main()
 {
     Node *nodes = new Node[8];
