@@ -31,6 +31,12 @@ void PRINT_PATH(Node *nodes, int source, int des)
     }
     cout << '1' << endl;
 }
+/*----------------------------------------------------------------
+                                BFS
+                                -> Queue
+                                -> O(V + E)
+----------------------------------------------------------------*/
+
 void BFS(vector<vector<int>> &edges, Node *nodes, int source)
 {
     int n = edges.size();
@@ -44,7 +50,7 @@ void BFS(vector<vector<int>> &edges, Node *nodes, int source)
     nodes[source].d = 0;
     nodes[source].pi = -1;
 
-    queue<int> q;
+    queue<int> q; // key point!!!
     q.push(source);
     while (!q.empty())
     {
@@ -70,7 +76,12 @@ void BFS(vector<vector<int>> &edges, Node *nodes, int source)
     //     cout << nodes[i].d << ' ';
     // }
 }
-
+/*----------------------------------------------------------------
+                                DFS
+                                -> Recursive
+                                -> O(V + E)
+                                -> Depth-first forest
+----------------------------------------------------------------*/
 void DFS_VISIT(vector<vector<int>> &edges, Node *nodes, int source)
 {
     timeT++;
@@ -100,7 +111,7 @@ void DFS(vector<vector<int>> &edges, Node *nodes)
         nodes[i].color = "WHITE";
         nodes[i].pi = -1;
     }
-    timeT = 0;
+    timeT = 0; // Global timer
     for (int i = 0; i < edges.size(); i++)
     {
         if (nodes[i].color == "WHITE")
@@ -116,7 +127,7 @@ vector<vector<int>> MATRIX_TRANSPORT(vector<vector<int>> &edges)
         for (int j = 0; j < edges.size(); j++)
         {
             if (edges[i][j] == 1)
-                transaction_safe_dynamic[j][i] = 1;
+                TRANSPORTED_MATRIX[j][i] = 1;
         }
     }
     return TRANSPORTED_MATRIX;
@@ -175,6 +186,8 @@ void STRONGLY_CONNECTED_COMPONENTS(vector<vector<int>> &edges, Node *nodes)
 
 /*
     Minimum Spanning Tree (MST)
+    1. Kruskal
+    2. Prim
 */
 
 /*
@@ -204,7 +217,7 @@ MST_KRUSKAL(G, w){                  // O(ElogV)
 }
 */
 
-/*
+/* DFS, similar to Dijkstra
 MST_PRIM(G, w, root){               // O(ElogV)
     A = an empty set;
     for(vertex v:V){
@@ -217,7 +230,7 @@ MST_PRIM(G, w, root){               // O(ElogV)
         u = EXTRACT_MIN(Q);         // O(logV)
         A = A U (u.pi, u);          // Find an edge to put in A.
         for each v in u.neighbors{  // run O(2E) times in total
-            if(v in Q && w(u, v) < v.key){
+            if(v in Q && w(u, v) < v.key){ // Note: Not relaxation here. We look for the cost connecting to the tree -> w(u, v)/
                 v.pi = u;
                 v.key = w(u, v);    // Update weights in pq. O(logV).
             }
@@ -257,7 +270,7 @@ void RELAX(vector<vector<int>> &edges, Node *nodes, int u, int v)
 /*
     Bellman-Ford's Algorithm.
     0. Could handle negative weights.
-    1. return a boolean: true if a negative-weighted cycle exists, false if a solution could be found.
+    1. return a boolean: false if a negative-weighted cycle exists, true if a solution could be found.
 */
 
 /* O(VE)
@@ -337,6 +350,8 @@ vector<int> myDijkstra(vector<vector<pair<int, int>>> &graph, int source)
         {
             int v = pair.first;
             int weight = pair.second;
+
+            // Relaxation
             if (distArr[v] > distArr[u] + weight)
             {
                 distArr[v] = distArr[u] + weight;
