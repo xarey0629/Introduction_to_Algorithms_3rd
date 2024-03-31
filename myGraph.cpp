@@ -7,7 +7,7 @@
 #include <utility> // pair
 using namespace std;
 
-int timeT = 0;
+int timeT = 0; // Timer for DFS.
 
 struct Node
 {
@@ -33,6 +33,7 @@ void PRINT_PATH(Node *nodes, int source, int des)
 }
 /*----------------------------------------------------------------
                                 BFS
+                                -> Three status: "WHITE", "GREY" and "BLACK"
                                 -> Queue
                                 -> O(V + E)
 ----------------------------------------------------------------*/
@@ -56,17 +57,16 @@ void BFS(vector<vector<int>> &edges, Node *nodes, int source)
     {
         int u = q.front();
         q.pop();
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) // Breadth-first: Scan all neighbors.
         {
-            // if(i == u) continue;
-            if (edges[u][i] == 0)
+            if (edges[u][i] == 0) // Not connected.
                 continue;
             if (nodes[i].color == "WHITE")
             {
                 nodes[i].color = "GREY";
                 nodes[i].d = nodes[u].d + 1;
                 nodes[i].pi = u;
-                q.push(i);
+                q.push(i); // Waiting in queue.
             }
         }
         nodes[u].color = "BLACK";
@@ -76,6 +76,7 @@ void BFS(vector<vector<int>> &edges, Node *nodes, int source)
     //     cout << nodes[i].d << ' ';
     // }
 }
+
 /*----------------------------------------------------------------
                                 DFS
                                 -> Recursive
@@ -87,6 +88,8 @@ void DFS_VISIT(vector<vector<int>> &edges, Node *nodes, int source)
     timeT++;
     nodes[source].d = timeT;
     nodes[source].color = "GREY";
+
+    // Traverse neighbors, but depth-first search.
     for (int v = 0; v < edges.size(); v++)
     {
         if (edges[source][v] == 0)
@@ -114,6 +117,7 @@ void DFS(vector<vector<int>> &edges, Node *nodes)
     timeT = 0; // Global timer
     for (int i = 0; i < edges.size(); i++)
     {
+        // Randomly find source node.
         if (nodes[i].color == "WHITE")
             DFS_VISIT(edges, nodes, i);
     }
