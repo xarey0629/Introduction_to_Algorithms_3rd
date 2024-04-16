@@ -4,47 +4,48 @@
 #include <vector>
 using namespace std;
 
-void merge(vector<int> &nums, int p, int q, int r)
+void merge(vector<int> &nums, int l, int mid, int r)
 {
-    // int n1 = q - p + 1;
-    // int n2 = r - q - 1;
-    vector<int> L(nums.begin() + p, nums.begin() + q + 1);
-    vector<int> R(nums.begin() + q + 1, nums.begin() + r + 1);
-    L.push_back(INT_MAX);
-    R.push_back(INT_MAX);
+    // Space Complexity O(N);
+    vector<int> L(nums.begin() + l, nums.begin() + mid + 1);     // [begin, end)
+    vector<int> R(nums.begin() + mid + 1, nums.begin() + r + 1); // [begin, end)
+    L.push_back(INT_MAX);                                        // Sentinel
+    R.push_back(INT_MAX);                                        // Sentinel
+
     int lCur = 0, rCur = 0;
-    for (int i = p; i <= r; i++)
+    for (int i = l; i <= r; i++)
     {
         nums[i] = L[lCur] < R[rCur] ? nums[i] = L[lCur++] : nums[i] = R[rCur++];
     }
     return;
 }
 
-void mergeSort(vector<int> &nums, int p, int r)
+// Post-order
+void mergeSort(vector<int> &nums, int l, int r)
 {
-    if (p < r)
-    {
-        int q = (p + r) / 2;
-        // ------------------ Recursive Case;
-        mergeSort(nums, p, q);
-        mergeSort(nums, q + 1, r);
+    if (l >= r)
+        return;
 
-        // ------------------ Base Case;
-        merge(nums, p, q, r);
-    }
+    int mid = (l + r) / 2;
+    // ------------------ Recursive Case in a post-order DFS style.
+    mergeSort(nums, l, mid);
+    mergeSort(nums, mid + 1, r);
+    // ------------------ Base Case: Merge Two Chunks.
+    merge(nums, l, mid, r);
+
     return;
 }
 
 int main()
 {
     vector<int> nums;
-
     for (int i = 0; i < 10; i++)
     {
         nums.push_back(rand() % 10);
         cout << nums[i] << ' ';
     }
     cout << '\n';
+
     mergeSort(nums, 0, nums.size() - 1);
     for (auto num : nums)
     {
